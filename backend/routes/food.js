@@ -54,13 +54,16 @@ router.post("/food/request/:id", async (req, res) => {
     food.otp = otp;
 
     await food.save();
+       
 
     // SOCKET NOTIFICATION
     const io = req.app.get("io");
 
-    io.emit("foodRequested", {
-      message: `Someone requested ${food.foodName}`,
-    });
+io.emit("foodRequested", {
+  message: `Someone requested ${food.foodName}`,
+});
+
+io.emit("foodUpdated");
 
     res.json({
       message: "Food requested successfully",
@@ -91,6 +94,9 @@ router.post("/food/collect/:id", async (req, res) => {
     food.otp = null; // remove OTP after use
 
     await food.save();
+     const io = req.app.get("io");
+    io.emit("foodUpdated");
+
 
     res.json({ message: "Food collected successfully" });
   } catch (error) {
