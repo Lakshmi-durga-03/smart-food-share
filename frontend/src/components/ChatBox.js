@@ -1,85 +1,164 @@
-import React, { useEffect, useState } from "react";
+
+
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 
-function ChatBox({ socket, roomId, userRole }) {
+function ChatBox({ socket, roomId, userRole, food }) {
   const [messages, setMessages] = useState([]);
-  const [msg, setMsg] = useState("");
+  const [text, setText] = useState("");
+  const bottomRef = useRef();
 
-  // Load old messages
-  const loadMessages = async () => {
-    try {
-      const res = await axios.get(`http://localhost:5000/api/chat/${roomId}`);
-      setMessages(res.data);
-    } catch (err) {
-      console.log("Error loading chat:", err);
+  // LOAD OLD MESSAGES
+  useEffect(() => {
+    if (!roomId) return;
+
+    axios
+      .get(`http://localhost:5000/api/chat/${roomId}`)
+      .then((res) => setMessages(res.data))
+      .catch(() => {});
+  }, [roomId]);
+
+  // SOCKET
+  useEffect(() => {
+    if (!socket || !roomId) return;
+
+    socket.emit("joinRoom", roomId);
+
+    socket.on("receiveMessage", (msg) => {
+      setMessages((prev) => [...prev, msg]);
+    });
+
+    return () => socket.off("receiveMessage");
+  }, [socket, roomId]);
+
+  // AUTO SCROLL
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const sendMessage = () => {
+    if (!text.trim()) return;
+
+    socket.emit("sendMessage", {
+      roomId,
+      sender: userRole,
+      message: text,
+    });
+
+    setText("");
+  };
+
+  //  ENTER KEY SEND
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      sendMessage();
     }
   };
 
-  useEffect(() => {
-    if (!socket) return;
+  // HEADER NAME
+  const getHeaderName = () => {
+    if (!food) return "Chat";
 
-    // Join only this food room
-    socket.emit("joinRoom", roomId);
+    if (userRole === "receiver") {
+      return `Donor ${food?.donorName || ""}`;
+    }
 
-    loadMessages();
+    if (userRole === "donor") {
+      return `Receiver ${food?.receiverName || ""}`;
+    }
 
-    const handleReceive = (data) => {
-      // Only update if same room
-      if (data.roomId === roomId) {
-        setMessages((prev) => [...prev, data]);
-      }
-    };
-
-    socket.on("receiveMessage", handleReceive);
-
-    return () => {
-      socket.off("receiveMessage", handleReceive);
-    };
-  }, [socket, roomId]);
-
-  const sendMessage = () => {
-    if (!msg.trim()) return;
-
-    const messageData = {
-      roomId,
-      sender: userRole,
-      message: msg,
-    };
-
-    socket.emit("sendMessage", messageData);
-
-    setMsg("");
+    return "Chat";
   };
 
   return (
-    <div className="card mt-2 p-2">
-      <h6>💬 Live Chat</h6>
-
+    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      
+      {/* HEADER */}
       <div
         style={{
-          height: "120px",
+          padding: "15px",
+          borderBottom: "1px solid #ddd",
+          fontWeight: "600",
+          background: "#fff"
+        }}
+      >
+        {getHeaderName()}
+      </div>
+
+      {/* MESSAGES */}
+      <div
+        style={{
+          flex: 1,
           overflowY: "auto",
-          border: "1px solid #ddd",
-          padding: "6px",
+          padding: "20px",
+          background: "#f5f5f5"
         }}
       >
         {messages.map((m, i) => (
-          <div key={i}>
-            <b>{m.sender}: </b> {m.message}
+          <div
+            key={i}
+            style={{
+              textAlign: m.sender === userRole ? "right" : "left",
+              marginBottom: "14px"
+            }}
+          >
+            <span
+              style={{
+                display: "inline-block",
+                padding: "10px 14px",
+                borderRadius: "14px",
+                maxWidth: "70%",
+                background:
+                  m.sender === userRole ? "#ff7a00" : "#e0e0e0",
+                color: m.sender === userRole ? "white" : "black"
+              }}
+            >
+              {m.message}
+            </span>
           </div>
         ))}
+        <div ref={bottomRef}></div>
       </div>
 
-      <input
-        className="form-control mt-2"
-        value={msg}
-        onChange={(e) => setMsg(e.target.value)}
-        placeholder="Type message..."
-      />
+      {/* INPUT */}
+      <div
+        style={{
+          padding: "12px",
+          borderTop: "1px solid #ddd",
+          display: "flex",
+          gap: "10px",
+          background: "#fff"
+        }}
+      >
+        <input
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          onKeyDown={handleKeyPress}
+          placeholder="Type message..."
+          style={{
+            flex: 1,
+            padding: "10px",
+            borderRadius: "8px",
+            border: "1px solid #ccc"
+          }}
+        />
 
-      <button className="btn btn-primary mt-2" onClick={sendMessage}>
-        Send
-      </button>
+        <button
+          onClick={sendMessage}
+          style={{
+            background: "#ff7a00",
+            color: "white",
+            border: "none",
+            padding: "10px 18px",
+            borderRadius: "8px",
+            cursor: "pointer"
+          }}
+        >
+          Send
+        </button>
+      </div>
+
     </div>
   );
 }

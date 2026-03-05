@@ -7,16 +7,16 @@ router.post("/food", async (req, res) => {
   try {
     const { foodName, quantity, location, latitude, longitude } = req.body;
 
-    const newFood = new Food({
-      foodName,
-      quantity,
-      location,
-      latitude,
-      longitude,
-      status: "available",
-      otp: null,
-    });
-
+   const newFood = new Food({
+  foodName,
+  quantity,
+  location,
+  latitude,
+  longitude,
+  postedBy: req.body.postedBy, // ✅ FIXED
+  status: "available",
+  otp: null,
+});
     await newFood.save();
 
     res.json({ message: "Food posted successfully" });
@@ -29,6 +29,14 @@ router.post("/food", async (req, res) => {
 router.get("/food", async (req, res) => {
   try {
     const foods = await Food.find();
+
+// 🔄 Auto-expire logic
+for (let food of foods) {
+  if (food.expiryTime && new Date() > food.expiryTime && food.status === "available") {
+    food.status = "expired";
+    await food.save();
+  }
+}
     res.json(foods);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -41,10 +49,18 @@ router.post("/food/request/:id", async (req, res) => {
     const { userId } = req.body;
 
     const food = await Food.findById(req.params.id);
+    // 🚫 Prevent requesting own food
+if (food.postedBy && food.postedBy.toString() === userId) {
+  return res.status(400).json({ message: "You cannot request your own food" });
+}
 
     if (!food) {
       return res.status(404).json({ message: "Food not found" });
     }
+    // 🚫 Prevent duplicate request
+if (food.status !== "available") {
+  return res.status(400).json({ message: "Food is not available" });
+}
 
     // ⭐ GENERATE OTP HERE
     const otp = Math.floor(1000 + Math.random() * 9000).toString();
@@ -89,6 +105,9 @@ router.post("/food/collect/:id", async (req, res) => {
     if (food.otp !== otp) {
       return res.status(400).json({ message: "Invalid OTP" });
     }
+    if (food.status !== "requested") {
+  return res.status(400).json({ message: "Food is not in requested state" });
+}
 
     food.status = "collected";
     food.otp = null; // remove OTP after use

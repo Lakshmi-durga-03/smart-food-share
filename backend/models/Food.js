@@ -8,7 +8,10 @@ const foodSchema = new mongoose.Schema({
   // ⭐ REAL LOCATION
   latitude: Number,
   longitude: Number,
-
+postedBy: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "User",
+},
   status: {
     type: String,
     default: "available",
