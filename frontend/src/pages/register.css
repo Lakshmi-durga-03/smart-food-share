@@ -13,19 +13,19 @@ body {
   align-items: center;
 }
 
-/* card */
+/* smaller centered card */
 .register-card {
-  background: rgba(255,255,255,0.95);
-  padding: 50px 40px;
-  width: 400px;
+  background: rgba(255,255,255,0.96);
+  padding: 35px 30px;
+  width: 340px;
   border-radius: 18px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
   text-align: center;
 }
 
 /* logo */
 .logo {
-  width: 120px;
+  width: 90px;
   display: block;
   margin: 0 auto 10px auto;
 }
@@ -33,22 +33,22 @@ body {
 /* brand */
 .brand {
   color: #ff6b00;
-  font-size: 34px;
-  margin-bottom: 5px;
+  font-size: 28px;
+  margin-bottom: 2px;
 }
 
 .tagline {
   color: #ff6b00;
   font-weight: bold;
-  margin-bottom: 25px;
+  margin-bottom: 18px;
 }
 
 /* inputs */
 .register-card input,
 .register-card select {
   width: 100%;
-  padding: 14px;
-  margin: 12px 0;
+  padding: 12px;
+  margin: 8px 0;
   border-radius: 8px;
   border: 1px solid #ccc;
 }
@@ -56,7 +56,8 @@ body {
 /* button */
 .register-card button {
   width: 100%;
-  padding: 14px;
+  padding: 12px;
+  margin-top: 10px;
   background: #ff6b00;
   color: white;
   border: none;
@@ -73,7 +74,7 @@ body {
 .error-box {
   background: #ffd6d6;
   color: red;
-  padding: 10px;
+  padding: 8px;
   border-radius: 8px;
   margin-bottom: 10px;
 }
@@ -81,11 +82,11 @@ body {
 .success-box {
   background: #d4f5d4;
   color: green;
-  padding: 10px;
+  padding: 8px;
   border-radius: 8px;
   margin-bottom: 10px;
 }
 
 .bottom-text {
-  margin-top: 15px;
+  margin-top: 12px;
 }

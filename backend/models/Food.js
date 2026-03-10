@@ -4,27 +4,34 @@ const foodSchema = new mongoose.Schema({
   foodName: String,
   quantity: String,
   location: String,
-
-  // ⭐ REAL LOCATION
   latitude: Number,
   longitude: Number,
 
-  status: {
-    type: String,
-    default: "available",
+  postedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    default: null,
   },
+
+  donorName: String,
 
   requestedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     default: null,
   },
+
+  receiverName: String,
+
+  status: {
+    type: String,
+    default: "available",
+  },
+
   otp: {
-  type: String,
-  default: null,
-},
-
-
+    type: String,
+    default: null,
+  },
 });
 
 module.exports = mongoose.model("Food", foodSchema);

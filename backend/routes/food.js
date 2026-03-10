@@ -1,11 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const Food = require("../models/Food");
+const User = require("../models/User");
 
-// ================= CREATE FOOD =================
+// CREATE FOOD
 router.post("/food", async (req, res) => {
   try {
-    const { foodName, quantity, location, latitude, longitude } = req.body;
+    const { foodName, quantity, location, latitude, longitude, postedBy } = req.body;
+
+    const donor = await User.findById(postedBy);
 
     const newFood = new Food({
       foodName,
@@ -13,6 +16,8 @@ router.post("/food", async (req, res) => {
       location,
       latitude,
       longitude,
+      postedBy,
+      donorName: donor?.name,
       status: "available",
       otp: null,
     });
@@ -20,87 +25,36 @@ router.post("/food", async (req, res) => {
     await newFood.save();
 
     res.json({ message: "Food posted successfully" });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
-// ================= GET FOODS =================
+// GET FOODS
 router.get("/food", async (req, res) => {
-  try {
-    const foods = await Food.find();
-    res.json(foods);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+  const foods = await Food.find();
+  res.json(foods);
 });
 
-// ================= REQUEST FOOD =================
+// REQUEST FOOD
 router.post("/food/request/:id", async (req, res) => {
   try {
     const { userId } = req.body;
 
     const food = await Food.findById(req.params.id);
+    if (!food) return res.status(404).json({ message: "Food not found" });
 
-    if (!food) {
-      return res.status(404).json({ message: "Food not found" });
-    }
-
-    // ⭐ GENERATE OTP HERE
-    const otp = Math.floor(1000 + Math.random() * 9000).toString();
+    const receiver = await User.findById(userId);
 
     food.status = "requested";
     food.requestedBy = userId;
-    food.otp = otp;
+    food.receiverName = receiver?.name;
 
     await food.save();
-       
 
-    // SOCKET NOTIFICATION
-    const io = req.app.get("io");
-
-io.emit("foodRequested", {
-  message: `Someone requested ${food.foodName}`,
-});
-
-io.emit("foodUpdated");
-
-    res.json({
-      message: "Food requested successfully",
-      otp: food.otp,
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// ================= COLLECT FOOD (OTP VERIFY) =================
-router.post("/food/collect/:id", async (req, res) => {
-  try {
-    const { otp } = req.body;
-
-    const food = await Food.findById(req.params.id);
-
-    if (!food) {
-      return res.status(404).json({ message: "Food not found" });
-    }
-
-    // OTP CHECK
-    if (food.otp !== otp) {
-      return res.status(400).json({ message: "Invalid OTP" });
-    }
-
-    food.status = "collected";
-    food.otp = null; // remove OTP after use
-
-    await food.save();
-     const io = req.app.get("io");
-    io.emit("foodUpdated");
-
-
-    res.json({ message: "Food collected successfully" });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.json({ message: "Food requested successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

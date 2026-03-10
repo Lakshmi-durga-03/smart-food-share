@@ -3,8 +3,8 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import "./register.css";
 
-import logo from "../assets/logo.png";     // your logo
-import bg from "../assets/foodbg.jpg";     // background image
+import logo from "../assets/logo.png";
+import bg from "../assets/foodbg.jpg";
 
 function Register() {
   const navigate = useNavigate();
@@ -15,8 +15,8 @@ function Register() {
   const [role, setRole] = useState("receiver");
 
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleRegister = async (e) => {
     e.preventDefault();
