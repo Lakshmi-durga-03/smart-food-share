@@ -37,7 +37,11 @@
   color: white;
 }
 
+<<<<<<< HEAD
 /* ===== MIDDLE ===== */
+=======
+/* ===== MAIN CONTENT ===== */
+>>>>>>> upstream/main
 .main-content {
   flex: 1;
   padding: 40px;
@@ -51,7 +55,11 @@
   color: #333;
 }
 
+<<<<<<< HEAD
 /* ===== CARD ===== */
+=======
+/* ===== FOOD CARD ===== */
+>>>>>>> upstream/main
 .food-card {
   background: white;
   padding: 25px;
@@ -73,9 +81,16 @@
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 13px;
+<<<<<<< HEAD
 }
 
 /* ===== BUTTON ===== */
+=======
+  text-transform: capitalize;
+}
+
+/* ===== REQUEST / CHAT BUTTON ===== */
+>>>>>>> upstream/main
 .chat-btn {
   margin-top: 14px;
   padding: 10px 18px;
@@ -86,13 +101,21 @@
   cursor: pointer;
   font-weight: 600;
   transition: 0.2s;
+<<<<<<< HEAD
+=======
+  width: 100%;
+>>>>>>> upstream/main
 }
 
 .chat-btn:hover {
   background: #e66a00;
 }
 
+<<<<<<< HEAD
 /* ===== FORM ===== */
+=======
+/* ===== INPUT FIELDS ===== */
+>>>>>>> upstream/main
 .food-card input {
   width: 100%;
   padding: 12px;
@@ -102,6 +125,19 @@
   font-size: 14px;
 }
 
+<<<<<<< HEAD
+=======
+/* ===== OTP BOX ===== */
+.otp-box {
+  margin-top: 10px;
+  padding: 8px;
+  background: #e8f7e8;
+  border-radius: 6px;
+  font-weight: 600;
+  color: green;
+}
+
+>>>>>>> upstream/main
 /* ===== RIGHT CHAT PANEL ===== */
 .right-chat {
   width: 360px;
@@ -123,8 +159,13 @@
   opacity: 0.7;
   margin-bottom: 10px;
 }
+<<<<<<< HEAD
 /* ===== SCROLLING WELCOME TEXT ===== */
 
+=======
+
+/* ===== SCROLLING WELCOME TEXT (kept from her design) ===== */
+>>>>>>> upstream/main
 .welcome-wrapper {
   width: 100%;
   overflow: hidden;
@@ -146,4 +187,34 @@
   100% {
     transform: translateX(-100%);
   }
+<<<<<<< HEAD
+=======
+}
+/* ===== SCROLLING WELCOME BAR ===== */
+
+/* ===== SCROLLING WELCOME TEXT (NO BG) ===== */
+
+.welcome-wrapper {
+  width: 100%;
+  overflow: hidden;
+  margin-bottom: 25px;
+}
+
+.welcome-scroll {
+  white-space: nowrap;
+  display: inline-block;
+  color: #ff6b00;
+  font-size: 22px;
+  font-weight: 600;
+  animation: scrollText 12s linear infinite;
+}
+
+@keyframes scrollText {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+>>>>>>> upstream/main
 }

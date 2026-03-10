@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> upstream/main
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 
@@ -46,7 +51,11 @@ function ChatBox({ socket, roomId, userRole, food }) {
     setText("");
   };
 
+<<<<<<< HEAD
   // ⭐ ENTER KEY SEND
+=======
+  //  ENTER KEY SEND
+>>>>>>> upstream/main
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -59,11 +68,19 @@ function ChatBox({ socket, roomId, userRole, food }) {
     if (!food) return "Chat";
 
     if (userRole === "receiver") {
+<<<<<<< HEAD
       return `Donor, ${food?.donorName || "Unknown"}`;
     }
 
     if (userRole === "donor") {
       return `Receiver, ${food?.receiverName || "Unknown"}`;
+=======
+      return `Donor ${food?.donorName || ""}`;
+    }
+
+    if (userRole === "donor") {
+      return `Receiver ${food?.receiverName || ""}`;
+>>>>>>> upstream/main
     }
 
     return "Chat";
